@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMT 子圖 (Subplot) 教程核心整理與 PyGMT 介紹</title>
+    <style>
+        /* CSS 樣式：美觀性與可讀性 */
+        :root {
+            --primary-color: #007bff; /* 核心藍色 */
+            --accent-color: #28a745; /* 強調綠色 */
+            --bg-light: #f8f9fa; /* 淺背景 */
+            --text-dark: #343a40; /* 深文本 */
+            --border-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--text-dark);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* PyGMT 圖片樣式 */
+        .pygmt-image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pygmt-image-container img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 核心觀點表格 */
+        .core-points table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .core-points th, .core-points td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .core-points th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .core-points tr:nth-child(even) {
+            background-color: #f2f7ff;
+        }
+        
+        /* 行動建議：互動式折疊面板 */
+        details {
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-light);
+            transition: background-color 0.3s;
+        }
+
+        details:hover {
+            background-color: #e9f5ff;
+        }
+
+        details[open] {
+            border-color: var(--primary-color);
+        }
+
+        summary {
+            font-weight: bold;
+            padding: 15px;
+            cursor: pointer;
+            outline: none;
+            list-style: none; /* 移除預設箭頭 */
+            position: relative;
+            background-color: #fff;
+            border-radius: 6px;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: '▶';
+            position: absolute;
+            right: 15px;
+            transform: rotate(0deg);
+            transition: transform 0.3s;
+        }
+
+        details[open] summary::after {
+            content: '▼';
+            transform: rotate(0deg);
+        }
+
+        .details-content {
+            padding: 0 15px 15px 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .details-content code, .pygmt-intro code {
+            background-color: #ffe8d4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ffc107;
+            margin-top: 20px;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+            .core-points th, .core-points td {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>【教程】GMT Subplot 繪圖指令核心整理</h1>
+    <p style="text-align: center; margin-bottom: 30px;">
+        <a href="https://youtu.be/a2AfG5lRvyE" target="_blank" title="前往 YouTube 觀看">影片連結：GMT Subplot 繪圖指令教學 (Eyou Liu)</a>
+        | <span style="color: #6c757d;">影片長度: 15:52</span>
+    </p>
+    
+    <div class="pygmt-intro">
+        <h2>🐍 PyGMT 介紹：Python 介面下的地圖繪製</h2>
+        <p>PyGMT 是一個強大的開源 Python 函式庫，它為 Generic Mapping Tools (GMT) 提供了 Python 語言介面。</p>
+        <ul>
+            <li>**核心用途：** 處理地理空間和地球物理數據，並製作出版品質（尤其適用於科學領域）的地圖和圖形。</li>
+            <li>**優勢：** 讓 GMT 對新用戶更加友好，並以 Python 風格的 API 大幅提升繪圖體驗，使用者可以直接在 Python 腳本中呼叫 GMT 繪圖，而不必處理複雜的命令行指令。</li>
+            <li>**基礎：** PyGMT 依賴於 GMT 6.0 及其後版本中實現的新功能，使用者需同時安裝 GMT 和 PyGMT 函式庫。</li>
+        </ul>
+        <div class="pygmt-image-container">
+            <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202025-12-03%20100859.png" alt="PyGMT 繪圖範例圖">
+            <p style="margin-top: 10px; font-size: 0.9em; color: #6c757d;">圖：PyGMT 繪製的地圖與資料呈現範例</p>
+        </div>
+    </div>
+    <div class="core-points">
+        <h2>📊 核心觀點 (Core Points)</h2>
+        <p>這段影片詳細教學了 Generic Mapping Tools (GMT) Version 6 中，如何使用 <code>gmt subplot</code> 功能來繪製多個子圖。</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>主題</th>
+                    <th>核心觀點</th>
+                    <th>參考時間</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>**子圖繪製流程**</td>
+                    <td>繪製子圖的程式碼必須被 <code>gmt subplot begin</code> 和 <code>gmt subplot end</code> 命令所包圍，全局參數（如整體尺寸、標題）應在 <code>begin</code> 後設定。</td>
+                    <td>[00:00:13]</td>
+                </tr>
+                <tr>
+                    <td>**子圖切換方法**</td>
+                    <td>推薦使用 **<code>gmt subplot set [index]</code>**（索引從 0 開始）來明確指定要繪製的子圖，比使用命令後加 <code>-c</code> 更具可讀性且不易出錯。</td>
+                    <td>[00:02:26]</td>
+                </tr>
+                <tr>
+                    <td>**尺寸與比例控制**</td>
+                    <td>子圖尺寸可透過 <code>-F</code> 參數搭配 <code>+f[X比例]/[Y比例]</code> 進行比例分配，或搭配 <code>+s[寬度]/[高度]</code> 進行精確尺寸定義。</td>
+                    <td>[00:09:33]</td>
+                </tr>
+                <tr>
+                    <td>**不規則佈局**</td>
+                    <td>可手動設定第一個子圖的 <code>-J</code> 尺寸使其佔據多欄位，並透過調整後續子圖的索引號來控制其位置，實現非標準佈局。</td>
+                    <td>[00:14:24]</td>
+                </tr>
+                <tr>
+                    <td>**軸標籤優化**</td>
+                    <td>使用 <code>-S</code> 參數（例如 <code>-Scbl</code>）可設定子圖共享軸，只在整體佈局的最下（Bottom）和最左（Left）側保留軸標籤和刻度。</td>
+                    <td>[00:11:36]</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>💡 可立即執行的行動建議清單 (Actionable Checklist)</h2>
+    <p>點擊標題以展開/收合詳細的指令語法和操作說明。</p>
+    
+    <details open>
+        <summary>步驟 1: 初始化子圖結構與全局參數</summary>
+        <div class="details-content">
+            <p><strong>命令結構：</strong></p>
+            <ul>
+                <li>使用 <code>gmt subplot begin [Rxc]</code> 命令開始繪製子圖，並定義總行數和列數（例如 <code>gmt subplot begin 2x2</code>）。</li>
+                <li><strong>全局尺寸：</strong> 使用 <code>-F</code> 設定整體圖形尺寸 (例如 <code>-F6i/6i</code>)。</li>
+                <li><strong>全局標題：</strong> 在 <code>-B</code> 中加入 <code>+t</code> (例如 <code>-B+t"Figure Title"</code>)。</li>
+            </ul>
+            <p><strong>範例：</strong></p>
+            <pre><code>gmt subplot begin 2x2 -F6i/6i -B+t"四格網格子圖範例"</code></pre>
+        </div>
+    </details>
+
+    <details>
+        <summary>步驟 2: 繪製單個子圖（關鍵步驟）</summary>
+        <div class="details-content">
+            <p><strong>核心操作：</strong></p>
+            <ul>
+                <li>**明確切換：** 繪製每個子圖前，必須使用 <code>gmt subplot set [index]</code> 來指定目前繪製的圖形（索引從 0 開始）。</li>
+                <li><strong>自動尺寸：</strong> 在子圖的繪圖命令中，將 <code>-J</code> 參數設定為 <code>?</code> (問號)，或直接省略 <code>-J</code>，GMT 會自動計算並分配尺寸。</li>
+            </ul>
+            <p><strong>範例：</strong></p>
+            <pre><code>gmt subplot set 0
+gmt grdimage grid_data.grd -J? -BWSen # 繪製第一個子圖
+
+gmt subplot set 1
+gmt contour grid_data.grd -J? -BWSen # 繪製第二個子圖</code></pre>
+        </div>
+    </details>
+
+    <details>
+        <summary>步驟 3: 調整子圖間距與自動標籤</summary>
+        <div class="details-content">
+            <p><strong>指令參數：</strong></p>
+            <ul>
+                <li><strong>調整間距：</strong> 在 <code>gmt subplot begin</code> 中使用 <code>-M[間距]</code> 來設定子圖之間間隔（例如 <code>-M0.1i</code>）。</li>
+                <li><strong>自動標籤：</strong> 使用 <code>-A</code> 自動為子圖編號（預設為 a) b) c)...）。可搭配 <code>-A(1)+jlb</code> 設定為從 (1) 開始，並將標籤置於左下角 (lb)。</li>
+                <li><strong>改變順序：</strong> 使用 <code>-A</code> 時，加入 <code>+v</code> 可將編號順序從先數行（橫向）改為先數列（縱向）。</li>
+            </ul>
+            <p><strong>範例：</strong></p>
+            <pre><code>gmt subplot begin 2x2 -M0.1i -A(1)+jlb+v ...</code></pre>
+        </div>
+    </details>
+
+    <details>
+        <summary>步驟 4: 處理大小不一或不規則佈局</summary>
+        <div class="details-content">
+            <p><strong>指令參數：</strong></p>
+            <ul>
+                <li><strong>比例分配：</strong> 使用 <code>-F... +f[X比例]/[Y比例]</code>，例如 <code>+f3:1/1:2</code> 表示 X 方向的兩列寬度比為 3:1，Y 方向的兩行高度比為 1:2。</li>
+                <li><strong>精確尺寸：</strong> 使用 <code>-F... +s[寬度]/[高度]</code> 定義每個子圖的絕對尺寸，例如 <code>+s3i/3i</code>。</li>
+                <li><strong>不規則佔據：</strong> 若第一個圖要佔據兩列，手動為第一個圖設定較寬的 <code>-J</code> 尺寸，並在繪製第三個圖時將索引設定為 <code>gmt subplot set 2</code>，跳過第二個圖的索引。</li>
+            </ul>
+        </div>
+    </details>
+    
+    <div class="highlight">
+        <h3>✨ GMT 6.0 邊框升級：精簡軸刻度 (Aesthetic Enhancement)</h3>
+        <p>為提高可讀性，GMT 6 提供了新的邊框控制選項，讓您僅保留邊框線而不顯示刻度與標籤。</p>
+        <ul>
+            <li>**小寫字母功能：** <code>t</code> (上), <code>b</code> (下), <code>l</code> (左), <code>r</code> (右) - **只繪製邊框線，不含刻度或標籤。**</li>
+            <li>**實用情境：** 在子圖中，您可能希望左下角子圖顯示 <code>-BWS</code>，而其他子圖只顯示 <code>-Btr</code> (只留上邊和右邊的線)。</li>
+            <li>**範例：** <code>-BWSen</code>（東邊和北邊僅顯示刻度，無標籤）已可被新選項取代，例如使用 <code>-BWSlr</code>。</li>
+        </ul>
+    </div>
+
+    <p style="margin-top: 40px; font-size: 0.9em; color: #6c757d; border-top: 1px solid var(--border-color); padding-top: 15px;">
+        **參考資料：**
+        <br>
+        影片資料來源：<a href="https://youtu.be/a2AfG5lRvyE" target="_blank">【教程】Generic Mapping Tools (GMT) Version 6 Instructions 03</a>
+        <br>
+        PyGMT 範例圖片連結：<a href="https://github.com/yaxin06/HW11_PYGMT_introduction/blob/main/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202025-12-03%20100859.png" target="_blank">PyGMT 範例圖 (GitHub)</a>
+    </p>
+
+</div>
+
+</body>
+</html>
