@@ -109,13 +109,13 @@ nav {
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* --- NEW: Showcase Section (圖片與介紹) --- */
+/* --- Showcase Section --- */
 .showcase-container {
   background: var(--glass);
   border: 1px solid var(--border-glass);
   border-radius: 20px;
   padding: 40px;
-  margin-top: -40px; /* 拉近與 Hero 的距離 */
+  margin-top: -40px; 
   box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -165,7 +165,7 @@ nav {
   font-size: 0.9em;
 }
 
-/* --- Features Grid --- */
+/* --- Features Grid (Same as previous) --- */
 .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
 .card {
   background: var(--glass); border: 1px solid var(--border-glass);
@@ -186,29 +186,92 @@ nav {
 }
 .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
 .tab-btn.active { background: #0d1117; color: var(--accent-cyan); border-top: 3px solid var(--accent-cyan); }
-.code-content { display: none; padding: 25px; overflow-x: auto; position: relative; }
-.code-content.active { display: block; }
-pre { margin: 0; font-family: var(--font-code); font-size: 0.95rem; color: #e6edf3; }
 
-/* Code Highlights */
+/* --- Code & Analysis Layout --- */
+.code-content { display: none; padding: 25px; position: relative; }
+.code-content.active { display: block; }
+
+.code-analysis-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr; 
+    gap: 30px;
+    padding-top: 15px; 
+}
+
+.code-analysis-grid > div:first-child { 
+    position: relative; 
+    padding-right: 10px; 
+}
+
+pre { margin: 0; font-family: var(--font-code); font-size: 0.95rem; color: #e6edf3; overflow-x: auto; }
+
+/* --- Analysis Panel Styles --- */
+.analysis-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(112, 0, 255, 0.1);
+    height: fit-content; 
+}
+.analysis-panel h3 {
+    color: var(--accent-pink);
+    border-bottom: 1px dashed var(--border-glass);
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 1.3rem;
+    display: flex; align-items: center; gap: 8px;
+}
+/* NEW: Image Style for Analysis Panel */
+.analysis-panel img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+/* END NEW */
+.analysis-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+.analysis-panel th, .analysis-panel td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: left;
+    vertical-align: top;
+}
+.analysis-panel th {
+    color: var(--accent-cyan);
+    font-weight: 600;
+    width: 35%; 
+    font-family: var(--font-code);
+}
+.analysis-panel td { color: var(--text-mute); }
+
+
+/* Code Highlights (Same as previous) */
 .kw { color: #ff7b72; } .str { color: #a5d6ff; } .func { color: #d2a8ff; } .comment { color: #8b949e; font-style: italic; }
 .copy-btn {
-  position: absolute; top: 15px; right: 15px;
+  position: absolute; top: 10px; right: 10px;
   background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
   color: #fff; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+  z-index: 10;
 }
 .copy-btn:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
 
-/* --- Citation --- */
-.citation-box {
-  background: rgba(0,0,0,0.4); padding: 20px; border-left: 4px solid var(--accent-pink);
-  font-size: 0.9rem; color: var(--text-mute); margin-top: 40px; border-radius: 0 8px 8px 0;
-}
 
 @media screen and (max-width: 900px) {
   .hero { grid-template-columns: 1fr; text-align: center; }
   .planet-visual { margin-top: 30px; }
   .showcase-container { grid-template-columns: 1fr; }
+  /* Stack code and analysis vertically on small screens */
+  .code-analysis-grid { grid-template-columns: 1fr; } 
+  .code-analysis-grid > div:first-child { padding-right: 0; }
+  .analysis-panel { margin-top: 20px; }
 }
 </style>
 </head>
@@ -284,7 +347,7 @@ pre { margin: 0; font-family: var(--font-code); font-size: 0.95rem; color: #e6ed
 
   <section id="code-lab" class="container">
     <h2>Code Laboratory</h2>
-    <p>切換分頁查看基於 EGU22 短課程的實作範例。</p>
+    <p>切換分頁查看基於 EGU22 短課程的實作範例，並獲得詳細的步驟解析。</p>
 
     <div class="code-wrapper">
       <div class="tabs">
@@ -294,25 +357,44 @@ pre { margin: 0; font-family: var(--font-code); font-size: 0.95rem; color: #e6ed
       </div>
 
       <div id="basic" class="code-content active">
-        <button class="copy-btn" onclick="copyCode('c1')">複製</button>
-        <pre><code id="c1"><span class="kw">import</span> pygmt
+        <div class="code-analysis-grid">
+          <div>
+            <button class="copy-btn" onclick="copyCode('c1')">複製</button>
+            <pre><code id="c1"><span class="kw">import</span> pygmt
 
 <span class="comment"># 建立畫布</span>
 fig = pygmt.<span class="func">Figure</span>()
 
 <span class="comment"># 設定基底：範圍(region)、投影(projection)、邊框(frame)</span>
-<span class="comment"># "R15c" = Robinson projection, 15cm width</span>
 fig.<span class="func">basemap</span>(region=<span class="str">"g"</span>, projection=<span class="str">"R15c"</span>, frame=<span class="str">"af"</span>)
 
 <span class="comment"># 繪製海岸線與填充</span>
 fig.<span class="func">coast</span>(land=<span class="str">"#333333"</span>, water=<span class="str">"skyblue"</span>, shorelines=<span class="str">"1p,black"</span>)
 
 fig.<span class="func">show</span>()</code></pre>
+          </div>
+          <div class="analysis-panel">
+            <h3>🗺️ 預期圖形樣貌</h3>
+            <p style="font-size: 0.95rem; color: var(--text-main);">本段程式碼繪製出的預期效果圖 (簡潔風格)：</p>
+            <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E5%9F%BA%E7%A4%8E%E5%9C%B0%E5%9C%96.png" alt="PyGMT基礎地圖範例">
+
+            <h3>📊 步驟解析 (Basemap)</h3>
+            <table>
+              <tr><th>fig.Figure()</th><td>初始化 PyGMT 畫布物件。</td></tr>
+              <tr><th>region="g"</th><td>設定繪圖區域為全球 (Global)。</td></tr>
+              <tr><th>projection="R15c"</th><td>使用 Robinson 投影 (R)，寬度為 15 公分。</td></tr>
+              <tr><th>frame="af"</th><td>開啟自動邊框與註記 (Automatic Frame)。</td></tr>
+              <tr><th>land="...", water="..."</th><td>設定陸地和水域的填充顏色，實現風格化效果。</td></tr>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div id="relief" class="code-content">
-        <button class="copy-btn" onclick="copyCode('c2')">複製</button>
-        <pre><code id="c2"><span class="kw">import</span> pygmt
+        <div class="code-analysis-grid">
+          <div>
+            <button class="copy-btn" onclick="copyCode('c2')">複製</button>
+            <pre><code id="c2"><span class="kw">import</span> pygmt
 
 fig = pygmt.<span class="func">Figure</span>()
 
@@ -326,11 +408,30 @@ fig.<span class="func">grdimage</span>(grid=grid, projection=<span class="str">"
 fig.<span class="func">colorbar</span>(frame=[<span class="str">"a2000"</span>, <span class="str">"x+lElevation"</span>, <span class="str">"y+lm"</span>])
 
 fig.<span class="func">show</span>()</code></pre>
+          </div>
+          <div class="analysis-panel">
+            <h3>🛰️ 預期圖形樣貌</h3>
+            <p style="font-size: 0.95rem; color: var(--text-main);">本段程式碼繪製出的預期效果圖 (地形上色)：</p>
+            <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E5%9C%B0%E5%BD%A2%E4%B8%8A%E8%89%B2.png" alt="PyGMT地形上色圖範例">
+
+            <h3>📊 步驟解析 (Gridding)</h3>
+            <table>
+              <tr><th>load_earth_relief</th><td>自動下載並緩存 1 弧分 (01m) 的地球高程網格數據。</td></tr>
+              <tr><th>grid=grid</th><td>指定繪圖的數據來源。</td></tr>
+              <tr><th>projection="Cyl_stere/..."</th><td>使用圓柱立體投影，中心點在 150/-20。</td></tr>
+              <tr><th>cmap="geo"</th><td>套用 GMT 內建的地形色階表。</td></tr>
+              <tr><th>fig.grdimage</th><td>將網格數據渲染成彩色圖像。</td></tr>
+              <tr><th>frame=["a2000", ...]</th><td>設定色條，主要註記間隔為 2000 單位 (公尺)。</td></tr>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div id="sub" class="code-content">
-        <button class="copy-btn" onclick="copyCode('c3')">複製</button>
-        <pre><code id="c3"><span class="kw">import</span> pygmt
+        <div class="code-analysis-grid">
+          <div>
+            <button class="copy-btn" onclick="copyCode('c3')">複製</button>
+            <pre><code id="c3"><span class="kw">import</span> pygmt
 
 fig = pygmt.<span class="func">Figure</span>()
 <span class="comment"># 建立 2行 x 1列 的子圖，總尺寸 15x20cm</span>
@@ -347,6 +448,23 @@ fig = pygmt.<span class="func">Figure</span>()
         fig.<span class="func">text</span>(x=10, y=5, text=<span class="str">"Panel 2"</span>)
 
 fig.<span class="func">show</span>()</code></pre>
+          </div>
+          <div class="analysis-panel">
+            <h3>📊 預期圖形樣貌</h3>
+            <p style="font-size: 0.95rem; color: var(--text-main);">本段程式碼繪製出的預期效果圖 (子圖排版)：</p>
+            <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E5%AD%90%E5%9C%96%E7%B9%AA%E8%A3%BD.png" alt="PyGMT子圖繪製範例">
+
+            <h3>📐 步驟解析 (Subplot)</h3>
+            <table>
+              <tr><th>fig.subplot(...)</th><td>使用 `with` 語法開啟子圖模式，定義 2 行 1 列的佈局。</td></tr>
+              <tr><th>figsize</th><td>設定所有子圖組合成的總尺寸為 15x20 公分。</td></tr>
+              <tr><th>fig.set_panel(0)</th><td>進入並激活第一個 (索引為 0) 子圖繪製區域。</td></tr>
+              <tr><th>region=[0, 10, 0, 10]</th><td>設置 Panel 0 的繪圖範圍。</td></tr>
+              <tr><th>fig.set_panel(1)</th><td>進入並激活第二個 (索引為 1) 子圖繪製區域。</td></tr>
+              <tr><th>fig.text</th><td>在指定的座標點添加文字標籤，用於標示面板。</td></tr>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
