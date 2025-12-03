@@ -93,7 +93,7 @@
             background-color: #f2f7ff;
         }
         
-        /* 行動建議：互動式折疊面板 */
+        /行動建議：互動式折疊面板/
         details {
             margin-bottom: 10px;
             border: 1px solid var(--border-color);
@@ -115,7 +115,7 @@
             padding: 15px;
             cursor: pointer;
             outline: none;
-            list-style: none; /* 移除預設箭頭 */
+            list-style: none; /移除預設箭頭/
             position: relative;
             background-color: #fff;
             border-radius: 6px;
@@ -158,7 +158,7 @@
             margin-top: 20px;
         }
 
-        /* 響應式設計 */
+        /響應式設計/
         @media (max-width: 768px) {
             .container {
                 margin: 20px;
@@ -185,9 +185,9 @@
         <h2>🐍 PyGMT 介紹：Python 介面下的地圖繪製</h2>
         <p>PyGMT 是一個強大的開源 Python 函式庫，它為 Generic Mapping Tools (GMT) 提供了 Python 語言介面。</p>
         <ul>
-            <li>**核心用途：** 處理地理空間和地球物理數據，並製作出版品質（尤其適用於科學領域）的地圖和圖形。</li>
-            <li>**優勢：** 讓 GMT 對新用戶更加友好，並以 Python 風格的 API 大幅提升繪圖體驗，使用者可以直接在 Python 腳本中呼叫 GMT 繪圖，而不必處理複雜的命令行指令。</li>
-            <li>**基礎：** PyGMT 依賴於 GMT 6.0 及其後版本中實現的新功能，使用者需同時安裝 GMT 和 PyGMT 函式庫。</li>
+            <li>核心用途：處理地理空間和地球物理數據，並製作出版品質（尤其適用於科學領域）的地圖和圖形。</li>
+            <li>優勢：讓 GMT 對新用戶更加友好，並以 Python 風格的 API 大幅提升繪圖體驗，使用者可以直接在 Python 腳本中呼叫 GMT 繪圖，而不必處理複雜的命令行指令。</li>
+            <li>基礎：PyGMT 依賴於 GMT 6.0 及其後版本中實現的新功能，使用者需同時安裝 GMT 和 PyGMT 函式庫。</li>
         </ul>
         <div class="pygmt-image-container">
             <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202025-12-03%20100859.png" alt="PyGMT 繪圖範例圖">
@@ -207,27 +207,27 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>**子圖繪製流程**</td>
+                    <td>子圖繪製流程</td>
                     <td>繪製子圖的程式碼必須被 <code>gmt subplot begin</code> 和 <code>gmt subplot end</code> 命令所包圍，全局參數（如整體尺寸、標題）應在 <code>begin</code> 後設定。</td>
                     <td>[00:00:13]</td>
                 </tr>
                 <tr>
-                    <td>**子圖切換方法**</td>
+                    <td>子圖切換方法</td>
                     <td>推薦使用 **<code>gmt subplot set [index]</code>**（索引從 0 開始）來明確指定要繪製的子圖，比使用命令後加 <code>-c</code> 更具可讀性且不易出錯。</td>
                     <td>[00:02:26]</td>
                 </tr>
                 <tr>
-                    <td>**尺寸與比例控制**</td>
+                    <td>尺寸與比例控制</td>
                     <td>子圖尺寸可透過 <code>-F</code> 參數搭配 <code>+f[X比例]/[Y比例]</code> 進行比例分配，或搭配 <code>+s[寬度]/[高度]</code> 進行精確尺寸定義。</td>
                     <td>[00:09:33]</td>
                 </tr>
                 <tr>
-                    <td>**不規則佈局**</td>
+                    <td>不規則佈局</td>
                     <td>可手動設定第一個子圖的 <code>-J</code> 尺寸使其佔據多欄位，並透過調整後續子圖的索引號來控制其位置，實現非標準佈局。</td>
                     <td>[00:14:24]</td>
                 </tr>
                 <tr>
-                    <td>**軸標籤優化**</td>
+                    <td>軸標籤優化</td>
                     <td>使用 <code>-S</code> 參數（例如 <code>-Scbl</code>）可設定子圖共享軸，只在整體佈局的最下（Bottom）和最左（Left）側保留軸標籤和刻度。</td>
                     <td>[00:11:36]</td>
                 </tr>
@@ -257,7 +257,7 @@
         <div class="details-content">
             <p><strong>核心操作：</strong></p>
             <ul>
-                <li>**明確切換：** 繪製每個子圖前，必須使用 <code>gmt subplot set [index]</code> 來指定目前繪製的圖形（索引從 0 開始）。</li>
+                <li>明確切換：繪製每個子圖前，必須使用 <code>gmt subplot set [index]</code> 來指定目前繪製的圖形（索引從 0 開始）。</li>
                 <li><strong>自動尺寸：</strong> 在子圖的繪圖命令中，將 <code>-J</code> 參數設定為 <code>?</code> (問號)，或直接省略 <code>-J</code>，GMT 會自動計算並分配尺寸。</li>
             </ul>
             <p><strong>範例：</strong></p>
@@ -299,14 +299,14 @@ gmt contour grid_data.grd -J? -BWSen # 繪製第二個子圖</code></pre>
         <h3>✨ GMT 6.0 邊框升級：精簡軸刻度 (Aesthetic Enhancement)</h3>
         <p>為提高可讀性，GMT 6 提供了新的邊框控制選項，讓您僅保留邊框線而不顯示刻度與標籤。</p>
         <ul>
-            <li>**小寫字母功能：** <code>t</code> (上), <code>b</code> (下), <code>l</code> (左), <code>r</code> (右) - **只繪製邊框線，不含刻度或標籤。**</li>
-            <li>**實用情境：** 在子圖中，您可能希望左下角子圖顯示 <code>-BWS</code>，而其他子圖只顯示 <code>-Btr</code> (只留上邊和右邊的線)。</li>
-            <li>**範例：** <code>-BWSen</code>（東邊和北邊僅顯示刻度，無標籤）已可被新選項取代，例如使用 <code>-BWSlr</code>。</li>
+            <li>小寫字母功能：<code>t</code> (上), <code>b</code> (下), <code>l</code> (左), <code>r</code> (右) - 只繪製邊框線，不含刻度或標籤。</li>
+            <li>實用情境：在子圖中，您可能希望左下角子圖顯示 <code>-BWS</code>，而其他子圖只顯示 <code>-Btr</code> (只留上邊和右邊的線)。</li>
+            <li>範例：<code>-BWSen</code>（東邊和北邊僅顯示刻度，無標籤）已可被新選項取代，例如使用 <code>-BWSlr</code>。</li>
         </ul>
     </div>
 
     <p style="margin-top: 40px; font-size: 0.9em; color: #6c757d; border-top: 1px solid var(--border-color); padding-top: 15px;">
-        **參考資料：**
+        參考資料：
         <br>
         影片資料來源：<a href="https://youtu.be/a2AfG5lRvyE" target="_blank">【教程】Generic Mapping Tools (GMT) Version 6 Instructions 03</a>
         <br>
