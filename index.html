@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PyGMT Orbit｜科學繪圖的軌道</title>
-<meta name="description" content="基於 EGU22 PyGMT 短課程的精華導覽。探索 Python 與 GMT 的完美結合，繪製出版級地圖。">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%231a202c'/><circle cx='50' cy='50' r='40' fill='none' stroke='%2363b3ed' stroke-width='4'/><path d='M50 10 L50 90 M10 50 L90 50' stroke='%2363b3ed' stroke-width='2' stroke-dasharray='5,5'/></svg>">
+<title>PyGMT Orbit｜地球科學繪圖的魔法工坊</title>
+<meta name="description" content="PyGMT 介紹與 EGU22 短課程精華導覽。探索 Python 與 GMT 的完美結合，繪製出版級地圖。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23050510'/><path d='M50 10 L50 90 M10 50 L90 50' stroke='%2300d4ff' stroke-width='2' stroke-dasharray='5,5'/><circle cx='50' cy='50' r='40' fill='none' stroke='%23ff007a' stroke-width='4'/></svg>">
 
 <style>
 /* --- 核心變數：深空軌道主題 --- */
@@ -18,6 +18,7 @@
   --text-main: #f0f4f8;     /* 主要文字 */
   --text-mute: #94a3b8;     /* 次要文字 */
   --glass: rgba(255, 255, 255, 0.05);
+  --glass-hover: rgba(255, 255, 255, 0.08);
   --border-glass: rgba(255, 255, 255, 0.1);
   --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
   --font-code: 'Fira Code', Consolas, Monaco, monospace;
@@ -33,7 +34,7 @@ body {
     radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.08), transparent 25%);
   color: var(--text-main);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* --- 動態背景星塵 --- */
@@ -41,141 +42,173 @@ body {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
   background-image: 
     radial-gradient(1px 1px at 10% 10%, white, transparent),
-    radial-gradient(1px 1px at 20% 40%, white, transparent),
-    radial-gradient(2px 2px at 50% 50%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 50% 50%, rgba(255,255,255,0.4), transparent),
     radial-gradient(1px 1px at 80% 80%, white, transparent);
-  background-size: 500px 500px;
-  animation: moveStars 60s linear infinite;
-  opacity: 0.6;
+  background-size: 600px 600px;
+  animation: moveStars 80s linear infinite;
+  opacity: 0.5;
 }
-@keyframes moveStars { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+@keyframes moveStars { from { background-position: 0 0; } to { background-position: 1200px 1200px; } }
 
 /* --- 佈局容器 --- */
-.container { width: min(1200px, 90vw); margin: 0 auto; padding: 0 20px; }
+.container { width: min(1100px, 92vw); margin: 0 auto; padding: 0 20px; }
 section { padding: 80px 0; border-bottom: 1px solid var(--border-glass); }
 
 /* --- Typography --- */
-h1, h2, h3 { margin-top: 0; line-height: 1.2; letter-spacing: -0.02em; }
-h1 { font-size: clamp(40px, 5vw, 72px); font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; margin-bottom: 24px; }
-h2 { font-size: 32px; color: var(--accent-cyan); display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
-h2::before { content: ''; display: block; width: 8px; height: 32px; background: var(--accent-pink); border-radius: 4px; }
+h1, h2, h3 { margin-top: 0; line-height: 1.25; letter-spacing: 0.5px; }
+h1 { font-size: clamp(40px, 6vw, 68px); font-weight: 800; background: linear-gradient(120deg, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; margin-bottom: 24px; }
+h2 { font-size: clamp(28px, 4vw, 36px); color: var(--accent-cyan); display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+h2::before { content: ''; display: block; width: 6px; height: 32px; background: var(--accent-pink); border-radius: 4px; box-shadow: 0 0 10px var(--accent-pink); }
 p { color: var(--text-mute); font-size: 1.1rem; margin-bottom: 1.5rem; }
 a { color: var(--accent-cyan); text-decoration: none; transition: 0.3s; }
-a:hover { color: var(--accent-pink); text-shadow: 0 0 10px var(--accent-pink); }
+a:hover { color: var(--accent-pink); text-shadow: 0 0 8px var(--accent-pink); }
 
 /* --- 導覽列 --- */
 nav {
   position: sticky; top: 0; z-index: 100;
-  backdrop-filter: blur(16px); background: rgba(5, 5, 16, 0.8);
+  backdrop-filter: blur(20px); background: rgba(5, 5, 16, 0.7);
   border-bottom: 1px solid var(--border-glass);
 }
 .nav-content {
   height: 70px; display: flex; align-items: center; justify-content: space-between;
 }
-.brand { font-weight: 800; font-size: 1.25rem; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+.brand { font-weight: 800; font-size: 1.4rem; color: #fff; letter-spacing: 1px; }
 .brand span { color: var(--accent-cyan); }
 .menu { display: flex; gap: 24px; }
 .menu a { font-size: 0.95rem; font-weight: 500; color: var(--text-mute); }
 .menu a:hover { color: #fff; }
+@media (max-width: 600px) { .menu { display: none; } }
 
 /* --- Hero Section --- */
-.hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; min-height: 80vh; border-bottom: none; }
+.hero { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; min-height: 75vh; border-bottom: none; }
 .hero-content { position: relative; z-index: 2; }
-.hero-visual { position: relative; height: 400px; display: flex; justify-content: center; align-items: center; }
+.btn-primary {
+  display: inline-block; padding: 14px 36px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  color: white; border-radius: 50px; font-weight: 700; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+  margin-top: 20px; transition: transform 0.2s;
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6); color: white; }
 
-/* 模擬地球的 CSS 動畫 */
+/* 模擬地球動畫 */
+.planet-visual { position: relative; height: 300px; display: flex; justify-content: center; align-items: center; }
 .planet {
-  width: 300px; height: 300px; border-radius: 50%;
+  width: 220px; height: 220px; border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe);
-  box-shadow: 0 0 60px rgba(79, 172, 254, 0.4), inset -40px -40px 60px rgba(0,0,0,0.5);
-  position: relative; animation: float 6s ease-in-out infinite;
+  box-shadow: 0 0 50px rgba(79, 172, 254, 0.3), inset -30px -30px 50px rgba(0,0,0,0.6);
+  animation: float 6s ease-in-out infinite;
 }
 .orbit-ring {
-  position: absolute; width: 450px; height: 450px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 50%;
-  animation: spin 20s linear infinite;
+  position: absolute; width: 340px; height: 340px; border: 1px dashed rgba(255,255,255,0.15); border-radius: 50%;
+  animation: spin 25s linear infinite;
 }
 .satellite {
-  width: 20px; height: 20px; background: var(--accent-pink); border-radius: 50%;
-  position: absolute; top: 50%; left: -10px; transform: translateY(-50%);
-  box-shadow: 0 0 15px var(--accent-pink);
+  width: 16px; height: 16px; background: var(--accent-pink); border-radius: 50%;
+  position: absolute; top: 50%; left: -8px; transform: translateY(-50%);
+  box-shadow: 0 0 12px var(--accent-pink);
 }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-.btn-primary {
-  display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-  color: white; border-radius: 50px; font-weight: 700; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-  margin-top: 20px;
+/* --- NEW: Showcase Section (圖片與介紹) --- */
+.showcase-container {
+  background: var(--glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 40px;
+  margin-top: -40px; /* 拉近與 Hero 的距離 */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5); color: white; }
+.showcase-img-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.showcase-img-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s;
+}
+.showcase-img-wrapper:hover img {
+  transform: scale(1.03);
+}
+.showcase-text h3 {
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--accent-purple);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+.showcase-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.showcase-text li {
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
+  color: var(--text-mute);
+}
+.showcase-text li::before {
+  content: '➤';
+  position: absolute;
+  left: 0;
+  color: var(--accent-cyan);
+  font-size: 0.9em;
+}
 
-/* --- 卡片通用樣式 --- */
+/* --- Features Grid --- */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
 .card {
   background: var(--glass); border: 1px solid var(--border-glass);
   padding: 24px; border-radius: 16px; transition: 0.3s;
 }
-.card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-
-/* --- 核心優勢 (Grid) --- */
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.card:hover { background: var(--glass-hover); border-color: rgba(255,255,255,0.25); transform: translateY(-5px); }
 .feature-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
 
-/* --- 互動式程式碼區塊 (Tabs) --- */
+/* --- Code Lab (Tabs) --- */
 .code-wrapper {
   background: #0d1117; border: 1px solid #30363d; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5); margin-top: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6); margin-top: 20px;
 }
-.tabs { display: flex; background: #161b22; border-bottom: 1px solid #30363d; }
+.tabs { display: flex; background: #161b22; border-bottom: 1px solid #30363d; overflow-x: auto; }
 .tab-btn {
-  background: none; border: none; color: #8b949e; padding: 12px 24px; cursor: pointer; font-family: inherit; font-size: 0.9rem;
+  background: none; border: none; color: #8b949e; padding: 14px 24px; cursor: pointer; font-family: inherit; font-size: 0.95rem; white-space: nowrap;
   border-right: 1px solid #30363d; transition: 0.2s;
 }
-.tab-btn:hover { color: #c9d1d9; }
-.tab-btn.active { background: #0d1117; color: var(--accent-cyan); border-bottom: 2px solid var(--accent-cyan); }
-.code-content { display: none; padding: 20px; overflow-x: auto; position: relative; }
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.tab-btn.active { background: #0d1117; color: var(--accent-cyan); border-top: 3px solid var(--accent-cyan); }
+.code-content { display: none; padding: 25px; overflow-x: auto; position: relative; }
 .code-content.active { display: block; }
+pre { margin: 0; font-family: var(--font-code); font-size: 0.95rem; color: #e6edf3; }
 
-pre { margin: 0; font-family: var(--font-code); font-size: 0.9rem; color: #e6edf3; }
+/* Code Highlights */
+.kw { color: #ff7b72; } .str { color: #a5d6ff; } .func { color: #d2a8ff; } .comment { color: #8b949e; font-style: italic; }
 .copy-btn {
-  position: absolute; top: 10px; right: 10px;
-  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
-  color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+  position: absolute; top: 15px; right: 15px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+  color: #fff; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
 }
-.copy-btn:hover { background: var(--accent-cyan); border-color: var(--accent-cyan); color: #000; }
+.copy-btn:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
 
-/* 簡易語法高亮 (CSS Only) */
-.kw { color: #ff7b72; } /* Keyword */
-.str { color: #a5d6ff; } /* String */
-.func { color: #d2a8ff; } /* Function */
-.num { color: #79c0ff; } /* Number */
-.comment { color: #8b949e; font-style: italic; }
-
-/* --- 影片精華流程圖 --- */
-.timeline { position: relative; max-width: 800px; margin: 0 auto; }
-.timeline::after { content: ''; position: absolute; width: 2px; background: var(--border-glass); top: 0; bottom: 0; left: 50%; margin-left: -1px; }
-.t-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; box-sizing: border-box; }
-.t-container::after { content: ''; position: absolute; width: 16px; height: 16px; right: -8px; background-color: var(--bg-deep); border: 2px solid var(--accent-cyan); top: 20px; border-radius: 50%; z-index: 1; }
-.left { left: 0; text-align: right; }
-.right { left: 50%; }
-.right::after { left: -8px; }
-.t-content { padding: 20px; background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-glass); position: relative; }
-.t-content h3 { color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 8px; }
-
-/* --- 引用區塊 --- */
+/* --- Citation --- */
 .citation-box {
-  background: rgba(0,0,0,0.3); padding: 15px; border-left: 4px solid var(--accent-pink);
-  font-size: 0.9rem; color: var(--text-mute); margin-top: 40px;
+  background: rgba(0,0,0,0.4); padding: 20px; border-left: 4px solid var(--accent-pink);
+  font-size: 0.9rem; color: var(--text-mute); margin-top: 40px; border-radius: 0 8px 8px 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
   .hero { grid-template-columns: 1fr; text-align: center; }
-  .hero-visual { height: 300px; }
-  .planet { width: 200px; height: 200px; margin: 0 auto; }
-  .orbit-ring { width: 280px; height: 280px; left: 50%; transform: translateX(-50%); }
-  .timeline::after { left: 31px; }
-  .t-container { width: 100%; padding-left: 70px; padding-right: 25px; }
-  .t-container::after { left: 21px; }
-  .left { text-align: left; }
+  .planet-visual { margin-top: 30px; }
+  .showcase-container { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -185,29 +218,24 @@ pre { margin: 0; font-family: var(--font-code); font-size: 0.9rem; color: #e6edf
 
   <nav>
     <div class="container nav-content">
-      <div class="brand">
-        <span>PyGMT</span> ORBIT
-      </div>
+      <div class="brand"><span>PyGMT</span> ORBIT</div>
       <div class="menu">
-        <a href="#about">關於</a>
+        <a href="#showcase">介紹</a>
+        <a href="#about">特色</a>
         <a href="#code-lab">程式碼實驗室</a>
-        <a href="#highlights">影片精華</a>
-        <a href="#resources">參考資源</a>
+        <a href="#resources">資源</a>
       </div>
     </div>
   </nav>
 
   <header class="container hero">
     <div class="hero-content">
-      <h1>讓科學數據<br>在地圖上說話</h1>
-      <p>結合 <b>GMT</b> 的強大繪圖引擎與 <b>Python</b> 的靈活生態系。<br>
-      專為地球科學家、地理學家與數據分析師打造的現代化繪圖工具。</p>
-      <div style="margin-top: 10px;">
-        <span style="background: rgba(0,212,255,0.1); color: var(--accent-cyan); padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">EGU22 課程精華重製</span>
-      </div>
+      <h1>讓科學數據<br>在深空中閃耀</h1>
+      <p>結合 <b>GMT 6</b> 的精準繪圖引擎與 <b>Python</b> 的靈活生態系。<br>
+      專為地球科學家打造的現代化視覺工具。</p>
       <a href="#code-lab" class="btn-primary">開始繪圖</a>
     </div>
-    <div class="hero-visual">
+    <div class="planet-visual">
       <div class="orbit-ring">
         <div class="satellite"></div>
       </div>
@@ -215,79 +243,58 @@ pre { margin: 0; font-family: var(--font-code); font-size: 0.9rem; color: #e6edf
     </div>
   </header>
 
+  <section id="showcase" class="container">
+    <div class="showcase-container">
+      <div class="showcase-img-wrapper">
+        <img src="https://raw.githubusercontent.com/yaxin06/HW11_PYGMT_introduction/main/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202025-12-03%20100859.png" alt="PyGMT 實際繪圖範例">
+      </div>
+      <div class="showcase-text">
+        <h3>PyGMT：Python 介面下的地圖繪製</h3>
+        <p>PyGMT 是一個開源的 Python 函式庫，它為 Generic Mapping Tools (GMT) 提供了直觀的 Python 介面，讓科學家能更輕鬆地處理地理空間數據。</p>
+        <ul>
+          <li><b>核心用途：</b>處理地球物理與地理空間數據，製作出版品質的地圖。</li>
+          <li><b>主要優勢：</b>結合 Python 風格的語法與 GMT 的強大底層，無需記憶複雜的 Shell 指令。</li>
+          <li><b>相依性：</b>建立在 GMT 6.0+ 之上，需同時安裝 PyGMT 函式庫與 GMT 軟體。</li>
+        </ul>
+        <p style="font-size: 0.9rem; margin-top: 15px; color: var(--accent-cyan);">圖示：PyGMT 實際繪製的地圖與資料呈現範例。</p>
+      </div>
+    </div>
+  </section>
+
   <section id="about" class="container">
     <h2><span style="color:white">Why</span> PyGMT?</h2>
     <div class="features-grid">
       <div class="card">
         <span class="feature-icon">🐍</span>
         <h3>Pythonic 風格</h3>
-        <p>不再需要撰寫艱澀的 shell script。利用物件導向語法 <code>fig.coast()</code>，直觀且易於維護。</p>
+        <p>利用物件導向語法 <code>fig.coast()</code>，直觀且易於維護，完美融入您的 Python 腳本。</p>
       </div>
       <div class="card">
         <span class="feature-icon">📊</span>
-        <h3>PyData 生態系整合</h3>
-        <p>完美支援 <b>xarray</b> (NetCDF), <b>pandas</b> (CSV), <b>geopandas</b>。直接將 DataArray 丟進去就能畫圖。</p>
+        <h3>數據整合</h3>
+        <p>完美支援 <b>xarray</b>, <b>pandas</b>, <b>geopandas</b>。直接將 DataArray 傳入即可繪圖，無需轉檔。</p>
       </div>
       <div class="card">
         <span class="feature-icon">🎨</span>
         <h3>出版級品質</h3>
-        <p>繼承 GMT 30 年來的精準度。支援向量輸出 (PDF/SVG)，滿足學術期刊的高標準要求。</p>
+        <p>繼承 GMT 30 年來的精準度。支援高解析度向量輸出 (PDF/SVG)，滿足學術期刊標準。</p>
       </div>
-    </div>
-  </section>
-
-  <section id="highlights" class="container">
-    <h2>EGU22 Masterclass Highlights</h2>
-    <p style="text-align:center; max-width:600px; margin:0 auto 40px auto;">
-      整理自 <i>"Crafting beautiful maps with PyGMT"</i> 線上課程。以下是從安裝到高階應用的學習路徑。
-    </p>
-    
-    <div class="timeline">
-      <div class="t-container left">
-        <div class="t-content">
-          <h3>The Figure Class</h3>
-          <p>一切從 <code>fig = pygmt.Figure()</code> 開始。這就像是一張畫布，所有的繪圖指令（method）都依附於此。</p>
-        </div>
-      </div>
-      <div class="t-container right">
-        <div class="t-content">
-          <h3>Projections (投影)</h3>
-          <p>GMT 的核心靈魂。使用 <code>projection="M10c"</code> (麥卡托) 或 <code>"R10c"</code> (羅賓森) 輕鬆切換視角。</p>
-        </div>
-      </div>
-      <div class="t-container left">
-        <div class="t-content">
-          <h3>Context Manager</h3>
-          <p>使用 <code>with pygmt.config(...):</code> 來暫時改變全域設定（如字體、邊框粗細），保持程式碼整潔。</p>
-        </div>
-      </div>
-      <div class="t-container right">
-        <div class="t-content">
-          <h3>Data Integration</h3>
-          <p>影片展示了如何直接讀取 <code>xarray</code> 的地形數據，並用 <code>grdimage</code> 快速渲染，無需繁瑣的轉檔。</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="citation-box">
-      <strong>參考影片來源：</strong><br>
-      [1] Uieda, L., Leong, W. J., Jones, M., et al. (2022). <em>Crafting beautiful maps with PyGMT</em> [Video]. EGU General Assembly 2022 Short Course. Available at: <a href="https://youtu.be/Dgf6ijduNoE" target="_blank" style="color:var(--accent-cyan)">YouTube Link</a>
     </div>
   </section>
 
   <section id="code-lab" class="container">
     <h2>Code Laboratory</h2>
-    <p>切換分頁查看不同情境的實作範例。</p>
+    <p>切換分頁查看基於 EGU22 短課程的實作範例。</p>
 
     <div class="code-wrapper">
       <div class="tabs">
         <button class="tab-btn active" onclick="openTab(event, 'basic')">1. 基礎地圖</button>
         <button class="tab-btn" onclick="openTab(event, 'relief')">2. 地形上色 (Grid)</button>
-        <button class="tab-btn" onclick="openTab(event, 'data')">3. 數據點繪製</button>
+        <button class="tab-btn" onclick="openTab(event, 'sub')">3. 子圖繪製 (Subplot)</button>
       </div>
 
       <div id="basic" class="code-content active">
-        <button class="copy-btn" onclick="copyCode('c1')">Copy</button>
+        <button class="copy-btn" onclick="copyCode('c1')">複製</button>
         <pre><code id="c1"><span class="kw">import</span> pygmt
 
 <span class="comment"># 建立畫布</span>
@@ -300,12 +307,11 @@ fig.<span class="func">basemap</span>(region=<span class="str">"g"</span>, proje
 <span class="comment"># 繪製海岸線與填充</span>
 fig.<span class="func">coast</span>(land=<span class="str">"#333333"</span>, water=<span class="str">"skyblue"</span>, shorelines=<span class="str">"1p,black"</span>)
 
-<span class="comment"># 顯示結果</span>
 fig.<span class="func">show</span>()</code></pre>
       </div>
 
       <div id="relief" class="code-content">
-        <button class="copy-btn" onclick="copyCode('c2')">Copy</button>
+        <button class="copy-btn" onclick="copyCode('c2')">複製</button>
         <pre><code id="c2"><span class="kw">import</span> pygmt
 
 fig = pygmt.<span class="func">Figure</span>()
@@ -313,8 +319,7 @@ fig = pygmt.<span class="func">Figure</span>()
 <span class="comment"># 下載/讀取地球地形數據 (1弧分解析度)</span>
 grid = pygmt.datasets.<span class="func">load_earth_relief</span>(resolution=<span class="str">"01m"</span>)
 
-<span class="comment"># 使用 grdimage 繪製網格數據</span>
-<span class="comment"># cmap="geo" 是 PyGMT 內建適合地形的色階</span>
+<span class="comment"># 使用 grdimage 繪製網格數據，cmap="geo" 是內建地形色階</span>
 fig.<span class="func">grdimage</span>(grid=grid, projection=<span class="str">"Cyl_stere/150/-20/15c"</span>, cmap=<span class="str">"geo"</span>)
 
 <span class="comment"># 加上色條 (Colorbar)</span>
@@ -323,33 +328,23 @@ fig.<span class="func">colorbar</span>(frame=[<span class="str">"a2000"</span>, 
 fig.<span class="func">show</span>()</code></pre>
       </div>
 
-      <div id="data" class="code-content">
-        <button class="copy-btn" onclick="copyCode('c3')">Copy</button>
+      <div id="sub" class="code-content">
+        <button class="copy-btn" onclick="copyCode('c3')">複製</button>
         <pre><code id="c3"><span class="kw">import</span> pygmt
-<span class="kw">import</span> pandas <span class="kw">as</span> pd
-
-<span class="comment"># 模擬數據：台灣周邊地震</span>
-data = pd.<span class="func">DataFrame</span>({
-    <span class="str">'longitude'</span>: [121.5, 122.0, 120.5],
-    <span class="str">'latitude'</span>: [24.0, 23.5, 22.8],
-    <span class="str">'magnitude'</span>: [0.3, 0.5, 0.8] <span class="comment"># 圓圈大小</span>
-})
 
 fig = pygmt.<span class="func">Figure</span>()
-fig.<span class="func">basemap</span>(region=[119, 123, 21, 26], projection=<span class="str">"M10c"</span>, frame=<span class="str">"a"</span>)
-fig.<span class="func">coast</span>(shorelines=<span class="str">"1p"</span>, land=<span class="str">"gray"</span>)
-
-<span class="comment"># 使用 plot 繪製點資料</span>
-<span class="comment"># style="cc" 表示圓形(circle)，大小由 magnitude 欄位決定</span>
-fig.<span class="func">plot</span>(
-    x=data.longitude,
-    y=data.latitude,
-    size=data.magnitude,
-    style=<span class="str">"cc"</span>,
-    color=<span class="str">"red"</span>,
-    pen=<span class="str">"1p,black"</span>,
-    transparency=50
-)
+<span class="comment"># 建立 2行 x 1列 的子圖，總尺寸 15x20cm</span>
+<span class="kw">with</span> fig.<span class="func">subplot</span>(nrows=2, ncols=1, figsize=(<span class="str">"15c"</span>, <span class="str">"20c"</span>), title=<span class="str">"Subplot Demo"</span>):
+    
+    <span class="comment"># 第一個子圖</span>
+    <span class="kw">with</span> fig.<span class="func">set_panel</span>(panel=0):
+        fig.<span class="func">basemap</span>(region=[0, 10, 0, 10], frame=[<span class="str">"WSne"</span>, <span class="str">"af"</span>])
+        fig.<span class="func">text</span>(x=5, y=5, text=<span class="str">"Panel 1"</span>)
+        
+    <span class="comment"># 第二個子圖</span>
+    <span class="kw">with</span> fig.<span class="func">set_panel</span>(panel=1):
+        fig.<span class="func">basemap</span>(region=[0, 20, 0, 10], frame=[<span class="str">"WSne"</span>, <span class="str">"af"</span>])
+        fig.<span class="func">text</span>(x=10, y=5, text=<span class="str">"Panel 2"</span>)
 
 fig.<span class="func">show</span>()</code></pre>
       </div>
@@ -360,67 +355,51 @@ fig.<span class="func">show</span>()</code></pre>
     <h2>References & Resources</h2>
     <div class="features-grid">
       <div class="card">
-        <h3>📚 官方文件</h3>
-        <p>最新的 API 參考手冊與教學。</p>
-        <a href="https://www.pygmt.org/" target="_blank">Visit PyGMT Docs →</a>
-      </div>
-      <div class="card">
-        <h3>🐱 GitHub</h3>
-        <p>原始碼、Issue 追蹤與社群貢獻。</p>
-        <a href="https://github.com/GenericMappingTools/pygmt" target="_blank">Visit Repository →</a>
+        <h3>📚 PyGMT Docs</h3>
+        <p>官方文件與 API 參考。</p>
+        <a href="https://www.pygmt.org/" target="_blank">Visit Site →</a>
       </div>
       <div class="card">
         <h3>📺 EGU22 Course</h3>
-        <p>本次內容的主要參考來源影片。</p>
-        <a href="https://youtu.be/Dgf6ijduNoE" target="_blank">Watch on YouTube →</a>
+        <p>Crafting beautiful maps with PyGMT.</p>
+        <a href="https://youtu.be/Dgf6ijduNoE" target="_blank">Watch Video →</a>
       </div>
     </div>
     
+    <div class="citation-box">
+      <strong>Image Source:</strong><br>
+      GitHub - yaxin06/HW11_PYGMT_introduction. Available at: <a href="https://github.com/yaxin06/HW11_PYGMT_introduction" target="_blank" style="color:var(--accent-cyan)">GitHub Repository</a>
+    </div>
+
     <div style="margin-top: 60px; border-top: 1px solid var(--border-glass); padding-top: 20px; font-size: 0.9rem; color: var(--text-mute); text-align: center;">
-      <p>Content adapted for educational purposes based on the EGU22 PyGMT Short Course.</p>
-      <p>© 2025 PyGMT Orbit Project. Not affiliated with the official GMT team.</p>
+      <p>© 2025 PyGMT Orbit Project. Adapted from EGU22 PyGMT Short Course material.</p>
     </div>
   </section>
 
   <script>
-    // Tab 切換邏輯
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
-      
-      // 隱藏所有內容
       tabcontent = document.getElementsByClassName("code-content");
       for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
         tabcontent[i].classList.remove("active");
       }
-      
-      // 移除所有按鈕的 active 狀態
       tablinks = document.getElementsByClassName("tab-btn");
       for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
       }
-      
-      // 顯示當前內容並設為 active
       document.getElementById(tabName).style.display = "block";
       setTimeout(() => document.getElementById(tabName).classList.add("active"), 10);
       evt.currentTarget.className += " active";
     }
 
-    // 複製程式碼邏輯
     function copyCode(elementId) {
       const codeBlock = document.getElementById(elementId);
       const range = document.createRange();
       range.selectNode(codeBlock);
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(range);
-      
-      try {
-        document.execCommand('copy');
-        alert('程式碼已複製！');
-      } catch (err) {
-        alert('複製失敗');
-      }
-      
+      try { document.execCommand('copy'); alert('程式碼已複製！'); } catch (err) { alert('複製失敗'); }
       window.getSelection().removeAllRanges();
     }
   </script>
